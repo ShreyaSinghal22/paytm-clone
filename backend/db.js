@@ -1,8 +1,9 @@
 const mongoose = require ("mongoose");
 
+
 mongoose.connect("mongodb://localhost:27017/mymongo");
 
-
+ // UserSchema 
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true },
     password: {type: String, required: true },
@@ -12,9 +13,9 @@ const userSchema = new mongoose.Schema({
     Age: {type: Number, required: true},
 });
 
-const user = mongoose.model('user', userSchema);
+const user = mongoose.model('User', userSchema);
 
-module.exprorts = {
+module.exports = {
     user
 };
 
