@@ -1,7 +1,6 @@
 const mongoose = require ("mongoose");
 
-
-mongoose.connect("mongodb://localhost:27017/mymongo");
+mongoose.connect("mongodb+srv://shreyasinghal5257:shreya2005@cluster21.wuupei6.mongodb.net/mymongo");
 
  // UserSchema 
 const userSchema = new mongoose.Schema({
@@ -13,9 +12,21 @@ const userSchema = new mongoose.Schema({
     Age: {type: Number, required: true},
 });
 
-const user = mongoose.model('User', userSchema);
+const User = mongoose.model('User', userSchema);
+
+const accountSchema = new mongoose.Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User', 
+        required: true },
+    balance: {
+        type: Number, 
+        required: true}
+})
+
+const Account = mongoose.model('Account', accountSchema);
 
 module.exports = {
-    user
+    User, Account
 };
 
