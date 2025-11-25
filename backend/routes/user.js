@@ -1,31 +1,32 @@
 const express = require('express');
 const router = express.Router();
 const zod = require("zod");
-const { user } = require("../db");
+const { User } = require("../db");
+const { Account } = require("../db");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../config");
 const { authMiddleware } = require("../middlewares");
-const { Account } = require("../db");
+
 
 const signupbody = zod.object({
     username : zod.string(),
     password : zod.string(),
-    firstname : zod.string(),
-    Lastname : zod.string(),
+    firstName : zod.string(),
+    lastName : zod.string(),
     email : zod.string().email(),
     Age : zod.number()
 });
 
 router.post("/signup", async (req,res)=>{
-      const { success } = signupbody.safeParse(req.body)
-    if(!success){
-        return res.status(411).json({
+      const result = signupbody.safeParse(req.body)
+    if(!result.success){
+        return res.status(400).json({
             message: "Email already taken / incorrect inputs"
         })
     }
 
-    const existingUser = await user.findOne({
-        username: req.body.username
+    const existingUser = await User.findOne({
+        email: req.body.email
     })
 
     if(existingUser) {
@@ -33,27 +34,32 @@ router.post("/signup", async (req,res)=>{
             message: "Email already taken/incorrect inputs"
         })
     }
-
-    const user = await User.create({
-        username: req.body.username,
-        password: req.body.password,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-    })
-
-    const userId = user._id;
-
-    await Account.create({
-        userId,
-        balance: 1 + Math.random() * 10000
-    })
-
-    const token = jwt.sign({userId}, JWT_SECRET);
     
-    res.json({
-        msg: "user created",
-        token: token
-    })
+    
+    try {
+        const user = await User.create({
+            username: req.body.username,
+            password: req.body.password,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            Age: req.body.Age,
+            email: req.body.email
+        });
+
+        const userId = user._id;
+
+        await Account.create({
+            userId: userId,
+            balance: 1 + Math.random() * 10000
+        });
+
+    } catch (error) {
+        console.log("User creation failed:",error);
+        return res.status(500).json({
+            message: "Internal server error"
+        });    
+    }
+
 
 });
     

@@ -6,8 +6,8 @@ mongoose.connect("mongodb+srv://shreyasinghal5257:shreya2005@cluster21.wuupei6.m
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true },
     password: {type: String, required: true },
-    firstname: String,
-    Lastname: String,
+    firstName: String,
+    lastName: String,
     email: { type: String, required:true, unique: true, match: [/.+\@.+\..+/, "Please fill a valid email address"]},
     Age: {type: Number, required: true},
 });
@@ -21,7 +21,7 @@ const accountSchema = new mongoose.Schema({
         required: true },
     balance: {
         type: Number, 
-        required: true}
+        required: true},
 })
 
 const Account = mongoose.model('Account', accountSchema);
